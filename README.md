@@ -9,4 +9,5 @@ Standard set of containers implemented in modern c++.
 * [deque](04-deque/deque.cc)
 * [tree](05-tree//tree.cc)
 * [bst](06-bst/bst.cc)
+* [heap](07-heap/heap.cc)
 

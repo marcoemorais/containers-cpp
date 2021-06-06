@@ -9,7 +9,9 @@ DIRS := \
 	02-stack \
 	03-queue \
 	04-deque \
-	05-tree
+	05-tree \
+	06-bst \
+	07-heap
 
 .PHONY: $(DIRS) all-clean
 
