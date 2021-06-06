@@ -7,6 +7,10 @@
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest/doctest.h"
 
+#if __has_include("containers/print.h")
+#   include "containers/print.h"
+#endif
+
 namespace containers
 {
 
