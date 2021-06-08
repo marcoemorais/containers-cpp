@@ -12,7 +12,8 @@ DIRS := \
 	05-tree \
 	06-bst \
 	07-heap \
-	08-trie
+	08-trie \
+	09-graph
 
 .PHONY: $(DIRS) all-clean
 
