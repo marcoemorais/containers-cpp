@@ -10,4 +10,5 @@ Standard set of containers implemented in modern c++.
 * [tree](05-tree//tree.cc)
 * [bst](06-bst/bst.cc)
 * [heap](07-heap/heap.cc)
+* [trie](08-trie/trie.cc)
 

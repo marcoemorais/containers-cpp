@@ -11,7 +11,8 @@ DIRS := \
 	04-deque \
 	05-tree \
 	06-bst \
-	07-heap
+	07-heap \
+	08-trie
 
 .PHONY: $(DIRS) all-clean
 
