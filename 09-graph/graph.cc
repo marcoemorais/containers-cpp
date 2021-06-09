@@ -33,25 +33,24 @@ struct Graph
     {
         auto vlist = vertices.find(from);
         if (vlist != end(vertices)) {
-             // Check for duplicates.
-             auto dupe = std::find(std::begin(vlist->second),
-                                   std::end(vlist->second),
-                                   to);
-             if (dupe == std::end(vlist->second)) {
-                 vlist->second.push_front(to);
-             }
+            auto vto = std::find(std::begin(vlist->second),
+                                 std::end(vlist->second),
+                                 to);
+            if (vto == std::end(vlist->second)) {
+                // Insert `to` if not already in the list.
+                vlist->second.push_front(to);
+            }
         }
         else {
-            // Create a new vertex list.
-            vertices[from] = VertexList{to};
+            vertices[from] = VertexList{to}; // New list.
         }
         if (!directed) {
             add_edge(to, from, true);
         }
         else {
             if (vertices.count(to) < 1) {
-                // Create an empty entry for `to` vertex.
-                vertices[to] = VertexList{from};
+                // Add an empty list for `to` if not already in graph.
+                vertices[to] = VertexList{};
             }
         }
     }
