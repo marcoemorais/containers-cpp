@@ -12,4 +12,5 @@ Standard set of containers implemented in modern c++.
 * [heap](07-heap/heap.cc)
 * [trie](08-trie/trie.cc)
 * [graph](09-graph/graph.cc)
+* [hashtable](10-hashtable/hashtable.cc)
 

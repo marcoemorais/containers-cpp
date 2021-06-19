@@ -5,6 +5,7 @@
 #include <iterator>
 #include <ostream>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 
 namespace std // doctest requires operator<< to be in std:: namespace.
@@ -39,6 +40,14 @@ operator<<(std::ostream& os, const std::unordered_map<K, V>& kvs)
         os << " " << kv.first << "=" << kv.second << ",";
     }
     os << "}";
+    return os;
+}
+
+template <typename T1, typename T2>
+std::ostream&
+operator<<(std::ostream& os, const std::pair<T1, T2>& p)
+{
+    os << "{" << p.first << "," << p.second << "}";
     return os;
 }
 
