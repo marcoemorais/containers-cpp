@@ -116,6 +116,17 @@ tree_height(const TreeNode<T>* root)
     return 1 + std::max(tree_height(root->left.get()), tree_height(root->right.get()));
 }
 
+// tree_size returns the number of elements in the tree.
+template <typename T>
+std::size_t
+tree_size(const TreeNode<T>* root)
+{
+    if (!root) {
+        return 0;
+    }
+    return 1 + tree_size(root->left.get()) + tree_size(root->right.get());
+}
+
 }
 
 TEST_CASE("[make_tree]")
@@ -234,5 +245,72 @@ TEST_CASE("[tree_height]")
         auto root = make_tree(c.input);
         auto height = tree_height(root.get());
         REQUIRE(height == c.expected);
+    }
+}
+
+TEST_CASE("[tree_size]")
+{
+    using namespace containers;
+
+    struct test_case
+    {
+        std::string name;
+        std::vector<int> input;
+        std::size_t expected;
+    };
+
+    std::vector<test_case> test_cases{
+        // Empty and 1 node trees have height=0.
+        {
+            "Empty tree.",
+            {},
+            0,
+        },
+        {
+            "1 node.",
+            {1},
+            1,
+        },
+        {
+            "2 node.",
+            {1, 2},
+            2,
+        },
+        {
+            "3 node.",
+            {1, 2, 3},
+            3,
+        },
+        {
+            "4 node.",
+            {1, 2, 3, 4},
+            4,
+        },
+        {
+            "5 node.",
+            {1, 2, 3, 4, 5},
+            5,
+        },
+        {
+            "6 node.",
+            {1, 2, 3, 4, 5, 6},
+            6,
+        },
+        {
+            "7 node.",
+            {1, 2, 3, 4, 5, 6, 7},
+            7,
+        },
+        {
+            "8 node.",
+            {1, 2, 3, 4, 5, 6, 7, 8},
+            8,
+        }
+    };
+
+    for (const auto& c : test_cases) {
+        auto root = make_tree(c.input);
+        auto size = tree_size(root.get());
+        REQUIRE(size == c.expected);
     }
 }
