@@ -19,10 +19,8 @@
 namespace containers
 {
 
-// VertexID uniquely identifies a vertex in a graph.
-using VertexID = int;
-
 // Graph is an adjacency list representation of an unweighted graph.
+template <typename VertexID = int>
 struct Graph
 {
     using VertexList = std::forward_list<VertexID>;
@@ -47,11 +45,9 @@ struct Graph
         if (!directed) {
             add_edge(to, from, true);
         }
-        else {
-            if (vertices.count(to) < 1) {
-                // Add an empty list for `to` if not already in graph.
-                vertices[to] = VertexList{};
-            }
+        else if (vertices.count(to) < 1) {
+            // Add an empty list for `to` if not already in graph.
+            vertices[to] = VertexList{};
         }
     }
 
@@ -59,27 +55,29 @@ struct Graph
 };
 
 // bfs performs a breadth first search of the graph calling visit.
-template <typename VisitFunc>
+template <typename VertexID,
+          typename VisitFunc>
 void
-bfs(const Graph& graph, const VertexID& start, VisitFunc visit)
+bfs(const Graph<VertexID>& graph, const VertexID& start, VisitFunc visit)
 {
     std::unordered_set<VertexID> discovered;
+    discovered.insert(start);
+
     using QueueEntry = std::pair<VertexID, VertexID>; // (from,to)
     std::queue<QueueEntry> vertices;
     vertices.emplace(start, start);
-    discovered.insert(start);
 
     while (!vertices.empty()) {
-        auto vpair = vertices.front();
-        vertices.pop(); // Discard.
-        visit(vpair.first, vpair.second); // Visit vertex.
-        for (const auto& vto : graph.vertices.at(vpair.second)) {
-            if (discovered.count(vto) < 1) {
+        auto v = vertices.front();
+        visit(v.first, v.second); // Visit vertex.
+        for (const auto& w : graph.vertices.at(v.second)) {
+            if (discovered.count(w) < 1) {
                 // Discovered new vertex, add to queue.
-                discovered.insert(vto);
-                vertices.emplace(vpair.second, vto); // (from,to)
+                discovered.insert(w);
+                vertices.emplace(v.second, w); // (from,to)
             }
         }
+        vertices.pop(); // Discard.
     }
 }
 
@@ -89,6 +87,7 @@ TEST_CASE("[bfs]")
 {
     using namespace containers;
 
+    using VertexID = int;
     using AddEdgeParams = std::tuple<VertexID, VertexID>;
 
     struct test_case
@@ -174,7 +173,7 @@ TEST_CASE("[bfs]")
 
     for (const auto& c : test_cases) {
         INFO(c.name);
-        Graph g;
+        Graph<VertexID> g;
         for (const auto& e : c.edges) {
             g.add_edge(std::get<0>(e), std::get<1>(e), c.directed);
         }
