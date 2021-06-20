@@ -81,6 +81,24 @@ bfs(const Graph<VertexID>& graph, const VertexID& start, VisitFunc visit)
     }
 }
 
+// dfs performs a depth first search of the graph calling visit.
+template <typename VertexID,
+          typename VisitFunc>
+void
+dfs(const Graph<VertexID>& graph, const VertexID& v, VisitFunc visit,
+    std::unordered_set<VertexID>& visited)
+{
+    visited.insert(v);
+    for (const auto& w : graph.vertices.at(v)) {
+        if (visited.count(w) < 1) {
+            dfs(graph, w, visit, visited);
+        }
+    }
+    // Crucial to perform the visit after all other
+    // vertices findable from start are visited.
+    visit(v);
+}
+
 }
 
 TEST_CASE("[bfs]")
@@ -177,6 +195,7 @@ TEST_CASE("[bfs]")
         for (const auto& e : c.edges) {
             g.add_edge(std::get<0>(e), std::get<1>(e), c.directed);
         }
+        INFO(g.vertices);
         // Visit function populates distance from start for each visited.
         std::unordered_map<VertexID, int> visited;
         auto visit_func =
@@ -188,5 +207,112 @@ TEST_CASE("[bfs]")
             };
         bfs(g, c.start, visit_func);
         REQUIRE(visited == c.expected);
+    }
+}
+
+TEST_CASE("[dfs]")
+{
+    using namespace containers;
+
+    using VertexID = int;
+    using AddEdgeParams = std::tuple<VertexID, VertexID>;
+
+    struct test_case
+    {
+        std::string name;
+        std::vector<AddEdgeParams> edges;
+        bool directed;
+        VertexID start;
+        std::vector<VertexID> expected;
+    };
+
+    std::vector<test_case> test_cases{
+        {
+            "Undirected graph.",
+            {
+                {0, 1},
+                {0, 2},
+                {1, 3},
+                {2, 3},
+                {2, 4},
+                {3, 4},
+                {3, 5},
+                {4, 5},
+            },
+            false,
+            0,
+            {
+                1,
+                3,
+                5,
+                4,
+                2,
+                0,
+            },
+        },
+        {
+            "Directed acyclic graph.",
+            {
+                {0, 1},
+                {0, 2},
+                {1, 3},
+                {2, 3},
+                {3, 4},
+                {3, 5},
+                {3, 6}
+            },
+            true,
+            0,
+            {
+                6,
+                5,
+                4,
+                3,
+                2,
+                1,
+                0,
+            },
+        },
+        {
+            "Directed graph with cycle.",
+            {
+                {1, 2},
+                {1, 5},
+                {2, 3},
+                {2, 4},
+                {2, 5},
+                {4, 5},
+                {4, 6},
+                {6, 1},
+            },
+            true,
+            1,
+            {
+                5,
+                6,
+                4,
+                3,
+                2,
+                1,
+            },
+        },
+    };
+
+    for (const auto& c : test_cases) {
+        INFO(c.name);
+        Graph<VertexID> g;
+        for (const auto& e : c.edges) {
+            g.add_edge(std::get<0>(e), std::get<1>(e), c.directed);
+        }
+        INFO(g.vertices);
+        // Visit function populates vertex traversal visit order.
+        std::vector<VertexID> visit_order;
+        auto visit_func =
+            [&visit_order] (const VertexID& v) {
+                visit_order.push_back(v);
+            };
+        std::unordered_set<VertexID> visited;
+        dfs(g, c.start, visit_func, visited);
+        REQUIRE(visit_order == c.expected);
     }
 }
