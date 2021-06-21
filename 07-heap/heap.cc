@@ -22,7 +22,7 @@ struct heap_empty_error : std::runtime_error
 // Heap provides constant time access to min or max value.
 // Inserting elements into the heap requires lg2(N) time.
 template <typename T,
-          typename Less = std::less<T>>
+          typename Compare = std::less<T>>
 class Heap
 {
 public:
@@ -68,7 +68,7 @@ private:
     // Use a vector indexed from 1 to simplify index computations.
     std::vector<T> tree{T{0}};
 
-    Less less; // Comparison function.
+    Compare comp_fn; // Comparison function.
 
     // bubbleUp maintains the heap property of parents of ind.
     void bubbleUp(std::size_t ind)
@@ -77,7 +77,7 @@ private:
         if (parent < 1) {
             return; // Already at root.
         }
-        if (less(tree[ind], tree[parent])) {
+        if (comp_fn(tree[ind], tree[parent])) {
             // Bubbble up if child less than parent.
             std::swap(tree[ind], tree[parent]);
             return bubbleUp(parent);
@@ -92,10 +92,10 @@ private:
             return; // Already at leaf.
         }
         std::size_t min = lchild;
-        if (lchild+1 < tree.size() && less(tree[lchild+1], tree[lchild])) {
+        if (lchild+1 < tree.size() && comp_fn(tree[lchild+1], tree[lchild])) {
             min = lchild+1;
         }
-        if (less(tree[min], tree[ind])) {
+        if (comp_fn(tree[min], tree[ind])) {
             // Bubble down if child less than parent.
             std::swap(tree[ind], tree[min]);
             return bubbleDown(min);
@@ -110,8 +110,8 @@ TEST_CASE("[MinHeap]")
     using namespace containers;
 
     using T = int;
-    using Less = std::less<int>;
-    Heap<T, Less> heap;
+    using Compare = std::less<int>;
+    Heap<T, Compare> heap;
     REQUIRE(heap.size() == 0);
 
     // Push elements in ascending order: 10, 20, 30.
@@ -198,8 +198,8 @@ TEST_CASE("[MaxHeap]")
     using namespace containers;
 
     using T = int;
-    using Less = std::greater<int>; // Invert sense of comparison.
-    Heap<T, Less> heap;
+    using Compare = std::greater<int>; // Invert sense of comparison.
+    Heap<T, Compare> heap;
     REQUIRE(heap.size() == 0);
 
     // Push elements in ascending order: 10, 20, 30.
