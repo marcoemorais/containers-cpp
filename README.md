@@ -13,4 +13,5 @@ Standard set of containers implemented in modern c++.
 * [trie](08-trie/trie.cc)
 * [graph](09-graph/graph.cc)
 * [hashtable](10-hashtable/hashtable.cc)
+* [union_find](11-union-find/union_find.cc)
 
