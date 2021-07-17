@@ -1,4 +1,5 @@
 #include <cstddef>
+#include <forward_list>
 #include <memory>
 #include <stdexcept>
 
@@ -13,67 +14,61 @@ struct queue_empty_error : std::runtime_error
     using std::runtime_error::runtime_error;
 };
 
-// node is a node in the queue.
-template <typename T>
-struct node
-{
-    node() = default;
-    node(const T& data) : data(data) { }
-    T data;
-    std::unique_ptr<node<T>> next;
-};
-
 // Queue is a FIFO container of elements.
 template <typename T>
 class Queue
 {
 public:
-    Queue() = default;
+    using List = std::forward_list<T>;
+    using ListIterator = typename std::forward_list<T>::iterator;
+
+    Queue() : tail(elems.end()) { }
 
     // push appends data to end of queue.
     void push(const T& data)
     {
-        if (!head) {
-            // Queue is empty.
-            head = std::make_unique<node<T>>(data);
-            tail = head.get();
+        if (elems.empty()) {
+            elems.push_front(data);
+            tail = elems.begin();
         }
         else {
-            tail->next = std::make_unique<node<T>>(data);
-            tail = tail->next.get();
+            tail = elems.insert_after(tail, data);
         }
-        ++nelem;
+        ++elems_size;
     }
 
     // pop removes but does not return from front of queue.
     void pop()
     {
-        if (!head) {
+        if (elems.empty()) {
             throw queue_empty_error{"pop from empty queue"};
         }
-        head = std::move(head->next);
-        --nelem;
+        elems.pop_front();
+        if (elems.empty()) {
+            tail = elems.end();
+        }
+        --elems_size;
     }
 
     // front returns but does not remove from front of queue.
     T& front()
     {
-        if (!head) {
+        if (elems.empty()) {
             throw queue_empty_error{"front from empty queue"};
         }
-        return head->data;
+        return elems.front();
     }
 
     // size returns number of elements in queue.
     std::size_t size() const
     {
-        return nelem;
+        return elems_size;
     }
 
 private:
-    std::unique_ptr<node<T>> head;
-    node<T>* tail;
-    std::size_t nelem = 0;
+    List elems;
+    ListIterator tail;
+    std::size_t elems_size = 0;
 };
 
 }
