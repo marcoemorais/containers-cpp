@@ -24,14 +24,9 @@ struct ListNode
         : data(data)
     { }
 
-    ListNode(const T& data, ListNodePtr next)
-        : data(data)
-        , next(next)
-    { }
-
     ListNode<T>* insert_after(const T& data)
     {
-        next = std::make_shared<ListNode<T>>(data, next);
+        next = std::make_shared<ListNode<T>>(data);
         return next.get();
     }
 
