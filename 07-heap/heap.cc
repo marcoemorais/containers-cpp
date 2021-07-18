@@ -35,20 +35,20 @@ public:
         bubbleUp(tree.size()-1);
     }
 
-    // front returns but does not remove from front of heap.
-    T& front()
+    // top returns but does not remove from top of heap.
+    T& top()
     {
         if (size() < 1) {
-            throw heap_empty_error{"front from empty heap"};
+            throw heap_empty_error{"top from empty heap"};
         }
         return tree[1];
     }
 
-    // pop_front removes but does not return from front of heap.
-    void pop_front()
+    // pop removes but does not return from top of heap.
+    void pop()
     {
         if (size() < 1) {
-            throw heap_empty_error{"pop_front from empty heap"};
+            throw heap_empty_error{"pop from empty heap"};
         }
         // Move rightmost child to root.
         std::swap(tree[1], tree[tree.size()-1]);
@@ -66,7 +66,7 @@ public:
 
 private:
     // Use a vector indexed from 1 to simplify index computations.
-    std::vector<T> tree{T{0}};
+    std::vector<T> tree{T()};
 
     Compare comp_fn; // Comparison function.
 
@@ -88,17 +88,16 @@ private:
     void bubbleDown(std::size_t ind)
     {
         std::size_t lchild = ind*2;
-        if (lchild >= tree.size()) {
-            return; // Already at leaf.
-        }
-        std::size_t min = lchild;
-        if (lchild+1 < tree.size() && comp_fn(tree[lchild+1], tree[lchild])) {
-            min = lchild+1;
-        }
-        if (comp_fn(tree[min], tree[ind])) {
-            // Bubble down if child less than parent.
-            std::swap(tree[ind], tree[min]);
-            return bubbleDown(min);
+        if (lchild < tree.size()) {
+            std::size_t min = lchild, rchild = lchild+1;
+            if (rchild < tree.size() && comp_fn(tree[rchild], tree[lchild])) {
+                min = rchild;
+            }
+            if (comp_fn(tree[min], tree[ind])) {
+                // Bubble down if child less than parent.
+                std::swap(tree[ind], tree[min]);
+                return bubbleDown(min);
+            }
         }
     }
 };
@@ -117,80 +116,80 @@ TEST_CASE("[MinHeap]")
     // Push elements in ascending order: 10, 20, 30.
     heap.push(10);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     heap.push(20);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     heap.push(30);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 
     // Push elements in descending order: 30, 20, 10.
     heap.push(30);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     heap.push(20);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
     heap.push(10);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 
     // Push unsorted elements: 20, 10, 30.
     heap.push(20);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
     heap.push(10);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     heap.push(30);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 }
 
 TEST_CASE("[MaxHeap]")
@@ -205,78 +204,78 @@ TEST_CASE("[MaxHeap]")
     // Push elements in ascending order: 10, 20, 30.
     heap.push(10);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
     heap.push(20);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
     heap.push(30);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 
     // Push elements in descending order: 30, 20, 10.
     heap.push(30);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     heap.push(20);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     heap.push(10);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 
     // Push unsorted elements: 20, 10, 30.
     heap.push(20);
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
     heap.push(10);
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
     heap.push(30);
     REQUIRE(heap.size() == 3);
-    REQUIRE(heap.front() == 30);
+    REQUIRE(heap.top() == 30);
 
     // Successively pop until heap is empty.
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 2);
-    REQUIRE(heap.front() == 20);
+    REQUIRE(heap.top() == 20);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 1);
-    REQUIRE(heap.front() == 10);
+    REQUIRE(heap.top() == 10);
 
-    heap.pop_front();
+    heap.pop();
     REQUIRE(heap.size() == 0);
-    REQUIRE_THROWS_AS(heap.front(), heap_empty_error);
+    REQUIRE_THROWS_AS(heap.top(), heap_empty_error);
 }
