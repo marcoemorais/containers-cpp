@@ -41,4 +41,6 @@ Standard set of containers implemented in modern c++.
     * Fast set membership lookup.
 * [maxstack](12-maxstack/maxstack.cc)
     * Stack with constant time access to maximum value.
+* [maxqueue](13-maxqueue/maxqueue.cc)
+    * Queue with constant time access to maximum value.
 
