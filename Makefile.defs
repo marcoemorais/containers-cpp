@@ -1,7 +1,7 @@
 
 INCLUDES = -I../include
 
-CXXFLAGS = -std=c++17 -O0 -g -Wall -Werror -Wextra -Wno-unused-parameter -pedantic $(INCLUDES)
+CXXFLAGS = -std=c++17 -O0 -g -Wall -Werror -Wextra -Wno-unused-parameter -Wpedantic $(INCLUDES)
 
 LDLIBS = -lpthread
 

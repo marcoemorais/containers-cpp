@@ -13,7 +13,11 @@ DIRS := \
 	06-bst \
 	07-heap \
 	08-trie \
-	09-graph
+	09-graph \
+	10-hashtable \
+	11-union-find \
+	12-maxstack \
+	13-maxqueue
 
 .PHONY: $(DIRS) all-clean
 

@@ -1,6 +1,6 @@
 # containers-cpp
 
-Standard set of containers implemented in modern c++.
+Some of my favorite containers implemented in modern c++.
 
 ## Containers
 * [list](01-list/list.cc)
@@ -29,4 +29,3 @@ Standard set of containers implemented in modern c++.
     * Stack with constant time access to maximum value.
 * [maxqueue](13-maxqueue/maxqueue.cc)
     * Queue with constant time access to maximum value.
-
