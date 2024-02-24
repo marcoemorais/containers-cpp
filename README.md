@@ -29,3 +29,5 @@ Some of my favorite containers implemented in modern c++.
     * Stack with constant time access to maximum value.
 * [maxqueue](13-maxqueue/maxqueue.cc)
     * Queue with constant time access to maximum value.
+* [lru](14-lru/lru.cc)
+    * Map with a least recently used (LRU) eviction policy.

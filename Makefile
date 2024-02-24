@@ -17,7 +17,8 @@ DIRS := \
 	10-hashtable \
 	11-union-find \
 	12-maxstack \
-	13-maxqueue
+	13-maxqueue \
+	14-lru
 
 .PHONY: $(DIRS) all-clean
 
